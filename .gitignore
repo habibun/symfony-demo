@@ -22,3 +22,8 @@
 /public/assets/
 /assets/vendor
 ###< symfony/asset-mapper ###
+
+
+###> miscellaneous ###
+/.idea
+###< miscellaneous ###
