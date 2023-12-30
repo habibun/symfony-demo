@@ -16,12 +16,12 @@ use App\Form\ChangePasswordType;
 use App\Form\UserType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\Security\Http\Logout\LogoutUrlGenerator;
 
 /**
  * Controller used to manage current user. The #[CurrentUser] attribute
@@ -31,10 +31,10 @@ use Symfony\Component\Security\Http\Logout\LogoutUrlGenerator;
  *
  * @author Romain Monteil <monteil.romain@gmail.com>
  */
-#[Route('/profile'), IsGranted('ROLE_USER')]
-class UserController extends AbstractController
+#[Route('/profile'), IsGranted(User::ROLE_USER)]
+final class UserController extends AbstractController
 {
-    #[Route('/edit', methods: ['GET', 'POST'], name: 'user_edit')]
+    #[Route('/edit', name: 'user_edit', methods: ['GET', 'POST'])]
     public function edit(
         #[CurrentUser] User $user,
         Request $request,
@@ -48,7 +48,7 @@ class UserController extends AbstractController
 
             $this->addFlash('success', 'user.updated_successfully');
 
-            return $this->redirectToRoute('user_edit');
+            return $this->redirectToRoute('user_edit', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('user/edit.html.twig', [
@@ -57,12 +57,12 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/change-password', methods: ['GET', 'POST'], name: 'user_change_password')]
+    #[Route('/change-password', name: 'user_change_password', methods: ['GET', 'POST'])]
     public function changePassword(
         #[CurrentUser] User $user,
         Request $request,
         EntityManagerInterface $entityManager,
-        LogoutUrlGenerator $logoutUrlGenerator,
+        Security $security,
     ): Response {
         $form = $this->createForm(ChangePasswordType::class, $user);
         $form->handleRequest($request);
@@ -70,7 +70,9 @@ class UserController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
-            return $this->redirect($logoutUrlGenerator->getLogoutPath());
+            // The logout method applies an automatic protection against CSRF attacks;
+            // it's explicitly disabled here because the form already has a CSRF token validated.
+            return $security->logout(validateCsrfToken: false) ?? $this->redirectToRoute('homepage');
         }
 
         return $this->render('user/change_password.html.twig', [

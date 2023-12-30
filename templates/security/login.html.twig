@@ -12,7 +12,7 @@
     {#
         This references the Stimulus controller defined in
         "assets/controllers/login-controller.js".
-        See https://symfony.com/doc/current/frontend/encore/simple-example.html#stimulus-symfony-ux
+        See https://symfony.com/bundles/StimulusBundle/current/index.html
         More info on Symfony UX https://ux.symfony.com
     #}
     <div class="row" {{ stimulus_controller('login') }}{# @see assets/controllers/login-controller.js #}>
@@ -83,17 +83,17 @@
                 </tbody>
             </table>
 
-            <div id="login-users-help" class="panel panel-default">
-                <div class="panel-body">
+            <div id="login-users-help" class="card">
+                <div class="card-body">
                     <p>
-                        <span class="label label-success">{{ 'note'|trans }}</span>
+                        <span class="badge badge-success">{{ 'note'|trans }}</span>
                         {{ 'help.reload_fixtures'|trans }}<br/>
 
                         <code class="console">$ php bin/console doctrine:fixtures:load</code>
                     </p>
 
                     <p>
-                        <span class="label label-success">{{ 'tip'|trans }}</span>
+                        <span class="badge badge-success">{{ 'tip'|trans }}</span>
                         {{ 'help.add_user'|trans }}<br/>
 
                         <code class="console">$ php bin/console app:add-user</code>

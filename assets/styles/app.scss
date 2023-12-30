@@ -1,42 +1,69 @@
-// setting the value of this variable to an empty data URL is the only working solution
-// to load the Bootswatch web fonts locally and avoid loading them from Google servers
-// see https://github.com/thomaspark/bootswatch/issues/55#issuecomment-298093182
-$web-font-path: 'data:text/css;base64,';
+@import "variables";
 
-// Make sure the bootstrap-sass and lato fonts are resolved correctly
-$icon-font-path: "~bootstrap-sass/assets/fonts/bootstrap/";
-$lato-font-path: '~lato-font/fonts';
+@import "../../vendor/twbs/bootstrap/scss/bootstrap.scss";
+@import "./bootswatch/bootswatch";
 
-@import "~bootswatch/flatly/variables";
-@import "~bootstrap-sass/assets/stylesheets/bootstrap";
-@import "~bootswatch/flatly/bootswatch";
-@import "~@fortawesome/fontawesome-free/css/all.css";
-@import "~@fortawesome/fontawesome-free/css/v4-shims.css";
-@import "~highlight.js/styles/github-dark-dimmed.css";
-
-// pick the Lato fonts individually to avoid importing the entire font family
-@import '~lato-font/scss/public-api';
-@include lato-include-font('normal');
-@include lato-include-font('bold');
+:root {
+  --font-heading: 2.5rem;
+  --font-title: 2rem;
+  --font-subtitle: 1.5rem;
+  --font-default: 19px;
+  --secondary-color: #ecf0f1;
+  --text-color: #2c3e50;
+  --blue: #007bff;
+  --red: #dc3545;
+  --yellow: #ffc107;
+  --green: #28a745;
+  --success: var(--green);
+  --navbar-margin-bottom: 21px;
+  --navbar-toggler-padding-x: .75rem;
+  --white: #fff;
+  --gray-100: #f8f9fa;
+  --gray-200: #e9ecef;
+  --gray-300: #dee2e6;
+  --gray-400: #ced4da;
+  --gray-500: #adb5bd;
+  --gray-600: #6c757d;
+  --gray-700: #495057;
+  --gray-7500: #e9ecec;
+  --gray-800: #343a40;
+  --gray-900: #212529;
+  --black: #000;
+}
 
 /* Basic styles
    ------------------------------------------------------------------------- */
+h1, .h1 {
+  font-size: var(--font-heading);
+}
+
+h3, .h3 {
+  font-size: var(--font-subtitle);
+}
+
 p, ul, ol {
-  font-size: 19px;
+  font-size: var(--font-default);
   margin-bottom: 1.5em
 }
 
-li {
+strong {
+  font-weight: bold;
+}
+
+li:not(.nav-item) {
   margin-bottom: 0.5em
 }
 
 code {
-  background: #ecf0f1;
-  color: #2c3e50
+  background: var(--secondary-color);
+  border-radius: 4px;
+  color: var(--text-color);
+  font-size: 90%;
+  padding: 2px 4px;
 }
 
 .text-danger, .text-danger:hover {
-  color: #e74c3c
+  color: var(--red);
 }
 
 i {
@@ -49,19 +76,42 @@ i {
 }
 
 .doclink {
-    color: inherit
+  color: inherit
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+.help-block {
+  display: block;
+}
+
+.alert-danger ul {
+  margin-bottom: 0;
+}
+
+.btn {
+  padding: 10px 15px;
+}
+
+form legend {
+  font-size: 22.5px;
 }
 
 /* Utilities
    ------------------------------------------------------------------------- */
-.m-b-0 { margin-bottom: 0 }
-
-@media (min-width: $screen-md-min) {
-  .modal-xl { width: $modal-lg; }
+.jumbotron {
+  padding: 1.5rem 1rem
 }
 
-@media (min-width: $screen-lg-min) {
-  .modal-xl { width: $screen-lg-min - 60px; }
+.well {
+  background-color: var(--secondary-color);
+  border: 1px solid transparent;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  min-height: 20px;
+  padding: 19px;
 }
 
 /* Page elements
@@ -69,40 +119,120 @@ i {
 body {
   display: flex;
   flex-direction: column;
-  min-height: 100vh
+  min-height: 100vh;
+}
+body:not(#homepage) {
+  padding-top: 110px
 }
 
-header {
-  margin-bottom: 2em
+header nav.navbar {
+  margin-bottom: var(--navbar-margin-bottom);
+}
+header nav.navbar .navbar-brand {
+  padding: 0;
+}
+header nav.navbar .navbar-toggler {
+  padding: 0 var(--navbar-toggler-padding-x);
+}
+header nav.navbar .nav-item {
+  font-size: 18px;
+  margin-left: 20px;
 }
 
-header ul.nav li {
-  margin-bottom: 0
+.modal-backdrop {
+  /* needed to lower the default 1,040 value which interferes with some styles */
+  z-index: 1024;
 }
-
-header .locales {
-  min-width: 200px;
+#locale-selector-modal {
+  background: var(--text-color);
 }
-header .locales a {
-  color: #212529;
-  padding: 3px 15px;
+@media (min-width: 768px) {
+  #locale-selector-modal .modal-dialog {
+    max-width: 800px;
+    width: 96%;
+  }
 }
-header .locales a small {
+#locale-selector-modal .modal-content {
+  border: 0;
+}
+#locale-selector-modal .modal-header {
+  background: var(--text-color);
+  border-bottom: 0;
+  color: var(--white);
+}
+#locale-selector-modal .modal-header .close {
+  color: var(--white);
+  opacity: 1;
+}
+#locale-selector-modal .modal-body {
+  background: var(--text-color);
+}
+#locale-selector-modal .modal-body .locales {
+  list-style: none;
+  padding: 0;
+}
+@media (min-width: 768px) {
+  #locale-selector-modal .modal-body .locales {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 10px 20px;
+  }
+}
+#locale-selector-modal .modal-body .locales li {
   border-radius: 4px;
-  border: 2px solid #dee2e6;
-  color: #7b8a8b;
-  float: left;
-  font-size: 12px;
+  margin-bottom: 10px;
+  position: relative;
+}
+@media (min-width: 768px) {
+  #locale-selector-modal .modal-body .locales li {
+    margin: 0;
+  }
+}
+#locale-selector-modal .modal-body .locales li.rtl a {
+  direction: rtl;
+}
+#locale-selector-modal .modal-body .locales li a {
+  align-items: center;
+  background: #fff;
+  border-radius: 4px;
+  color: var(--gray-900);
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 20px;
+}
+#locale-selector-modal .modal-body .locales li a small {
+  border-radius: 4px;
+  border: 2px solid var(--gray-300);
+  color: var(--gray-800);
+  font-size: 14px;
+  font-weight: bold;
   line-height: 1.1;
-  margin: 2px 10px 0 0;
+  margin-inline-start: 10px;
   min-width: 26px;
-  padding: 0px 3px;
+  padding: 2px 6px;
   text-align: center;
   text-transform: uppercase;
 }
-header .locales .active small,
-header .locales a:hover small {
-  color: inherit;
+#locale-selector-modal .modal-body .locales li:hover a {
+  outline: 3px solid #18bc9c;
+  outline-offset: -5px;
+}
+#locale-selector-modal .modal-body .locales li:hover a small {
+  background: #18bc9c;
+  border-color: #18bc9c;
+  color: #fff;
+}
+#locale-selector-modal .modal-body .locales li.active a,
+#locale-selector-modal .modal-body .locales li:hover.active a {
+  background: #18bc9c;
+  color: #fff;
+  outline: none;
+}
+#locale-selector-modal .modal-body .locales li.active a small,
+#locale-selector-modal .modal-body .locales li:hover.active a small {
+  background: transparent;
+  border-color: #fff;
+  color: #fff;
 }
 
 .body-container {
@@ -127,15 +257,19 @@ header .locales a:hover small {
   margin: 1.5em 0 0
 }
 
+.btn-secondary {
+  color: #fff;
+}
+
 footer {
-  background: #ecf0f1;
+  background: var(--secondary-color);
   margin-top: 2em;
   padding-top: 2em;
   padding-bottom: 2em
 }
 
 footer p {
-  color: #7b8a8b;
+  color: var(--gray-700);
   font-size: 13px;
   margin-bottom: 0.25em
 }
@@ -145,24 +279,36 @@ footer #footer-resources {
 }
 
 footer #footer-resources i {
-  color: #7b8a8b;
+  color: var(--gray-700);
   font-size: 28.5px;
   margin-left: 0.5em
 }
 
-#sourceCodeModal h3 {
-  font-size: 19px;
-  margin-top: 0
+#sourceCodeModal .modal-header {
+  border-bottom: 0;
+  padding: 1rem 1rem 0;
 }
-
-#sourceCodeModal h3 small {
-  color: #7b8a8b;
-  font-size: 80%
+#sourceCodeModal .modal-header h3 { font-size: 18px; margin-top: 0; }
+#sourceCodeModal .nav-tabs {
+  border-bottom-color: #95a5a6;
+  margin-bottom: 15px;
 }
-
+#sourceCodeModal .nav-tabs .nav-link { font-size: 16px; }
+#sourceCodeModal .nav-tabs .nav-link.active { border-color: #95a5a6 #95a5a6 #fff; }
+#sourceCodeModal .nav-tabs .nav-link:not(.active):hover { border-color: transparent; text-decoration: underline; }
+#sourceCodeModal .tab-content {
+  .file-link { font-size: 16px; margin: 0 0 10px 5px; }
+}
 #sourceCodeModal pre {
-  margin-bottom: 2em;
-  padding: 0
+  margin-bottom: 0;
+  padding: 0;
+  display: block;
+  word-break: break-all;
+  word-wrap: break-word;
+}
+#sourceCodeModal pre code {
+  border-radius: 6px;
+  white-space: pre-wrap;
 }
 
 #confirmationModal .modal-dialog {
@@ -176,23 +322,32 @@ footer #footer-resources i {
 /* Misc. elements
    ------------------------------------------------------------------------- */
 .section.rss a {
-  color: #f39c12;
+  color: var(--orange);
   font-size: 21px;
 }
 
 /* Forms
    ------------------------------------------------------------------------- */
+.form-control {
+  color: var(--gray-700);
+  height: 45px;
+}
+
+.form-group .form-control:focus {
+  color: var(--text-color);
+}
+
 .form-group.has-error .form-control {
-  border-color: #e74c3c
+  border-color: var(--red);
 }
 
 .form-group.has-error .control-label {
-  color: #e74c3c
+  color: var(--red);
 }
 
 .form-group.has-error .help-block {
-  background-color: #e74c3c;
-  color: #fff;
+  background-color: var(--red);
+  color: var(--white);
   font-size: 15px;
   padding: 1em
 }
@@ -201,6 +356,7 @@ footer #footer-resources i {
 .form-group.has-error .help-block li {
   margin-bottom: 0
 }
+
 .form-group.has-error .help-block li + li {
   margin-top: 0.5em;
 }
@@ -229,7 +385,54 @@ body#requirements_checker .panel li {
 /* Page: 'Homepage'
    ------------------------------------------------------------------------- */
 body#homepage {
-  text-align: center
+  text-align: center;
+}
+body#homepage .page-header {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 9.5px;
+  margin: 60px 0 30px;
+}
+body#homepage .page-header h1 {
+  font-size: 32px;
+  margin: 0;
+}
+body#homepage .page-header a.language-selector-dropdown-button {
+  align-items: center;
+  border: 2px solid var(--gray-300);
+  border-radius: 4px;
+  color: inherit;
+  display: inline-flex;
+  font-size: 16px;
+  line-height: 1;
+  padding: 5px 15px;
+}
+body#homepage .page-header a.language-selector-dropdown-button:hover {
+  background: var(--gray-100);
+  border-color: var(--gray-800);
+}
+body#homepage .page-header a.language-selector-dropdown-button .current-language {
+  display: inline-flex;
+  margin-inline: 5px 10px;
+}
+body#homepage .jumbotron {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+  padding: 45px 15px;
+}
+body#homepage .jumbotron .btn {
+  font-size: 19px;
+  line-height: 1.33333;
+  padding: 18px 27px;
+  border-radius: 6px;
+  margin-top: 20px;
+}
+body#homepage .jumbotron P {
+  margin-bottom: 0;
+  font-size: 23px;
+  font-weight: 400
 }
 
 /* Page: 'Login'
@@ -255,33 +458,50 @@ body#login #login-users-help p .console {
 
 body#login .form-group-password {
   position: relative;
+}
+body#login .form-group-password input {
+  padding-right: 48px;
+}
+body#login .form-group-password button {
+  background: transparent;
+  border: 0;
+  color: var(--text-color);
+  height: 45px;
+  outline: 0;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
 
-  input { padding-right: 48px; }
-  button {
-    background: transparent;
-    border: 0;
-    color: #2C3E50;
-    height: 45px;
-    outline: 0;
-    position: absolute;
-    bottom: 0;
-    right: 0;
-  }
+body#login #login-help table td {
+  vertical-align: middle;
 }
 
 /* Common Blog page elements
    ------------------------------------------------------------------------- */
+.post h2 {
+  font-size: var(--font-title);
+}
+
 .post-metadata {
-  color: #b4bcc2;
-  font-size: 19px;
+  color: var(--gray-600);
+  font-size: var(--font-default);
   margin-bottom: 16px;
 }
+
 .post-metadata .metadata {
   margin-right: 1.5em;
 }
 
-.post-tags .label {
+.post-tags .badge {
   margin-right: 5px;
+  color: var(--gray-700);
+  padding: .5rem .75rem;
+  background-color: var(--gray-200);
+}
+.post-tags .badge.badge-success {
+  background-color: var(--success);
+  color: var(--white);
 }
 
 /* Page: 'Blog index'
@@ -301,9 +521,10 @@ body#blog_index .post-metadata {
 }
 
 body#blog_index .post-tags .label-default {
-  background-color: #e9ecec;
+  background-color: var(--gray-7500);
   color: #6d8283;
 }
+
 body#blog_index .post-tags .label-default i {
   color: #a3b2b2;
 }
@@ -315,12 +536,13 @@ body#blog_post_show #main h3 {
 }
 
 body#blog_post_show .post-tags .label-default {
-  background-color: #e9ecec;
+  background-color: var(--gray-7500);
   color: #6D8283;
   font-size: 16px;
   margin-right: 10px;
   padding: .4em 1em .5em;
 }
+
 body#blog_post_show .post-tags .label-default i {
   color: #95A6A7;
 }
@@ -381,4 +603,9 @@ body#blog_search article.post {
 body#blog_search .post-metadata {
   font-size: 16px;
   margin-bottom: 8px;
+}
+
+.input-group button.btn {
+  padding-bottom: 0;
+  padding-top: 0;
 }

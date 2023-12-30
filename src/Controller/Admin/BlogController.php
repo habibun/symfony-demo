@@ -22,7 +22,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -38,8 +38,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
  * @author Javier Eguiluz <javier.eguiluz@gmail.com>
  */
 #[Route('/admin/post')]
-#[IsGranted('ROLE_ADMIN')]
-class BlogController extends AbstractController
+#[IsGranted(User::ROLE_ADMIN)]
+final class BlogController extends AbstractController
 {
     /**
      * Lists all Post entities.
@@ -52,8 +52,8 @@ class BlogController extends AbstractController
      *     could move this annotation to any other controller while maintaining
      *     the route name and therefore, without breaking any existing link.
      */
-    #[Route('/', methods: ['GET'], name: 'admin_index')]
-    #[Route('/', methods: ['GET'], name: 'admin_post_index')]
+    #[Route('/', name: 'admin_index', methods: ['GET'])]
+    #[Route('/', name: 'admin_post_index', methods: ['GET'])]
     public function index(
         #[CurrentUser] User $user,
         PostRepository $posts,
@@ -70,7 +70,7 @@ class BlogController extends AbstractController
      * to constraint the HTTP methods each controller responds to (by default
      * it responds to all methods).
      */
-    #[Route('/new', methods: ['GET', 'POST'], name: 'admin_post_new')]
+    #[Route('/new', name: 'admin_post_new', methods: ['GET', 'POST'])]
     public function new(
         #[CurrentUser] User $user,
         Request $request,
@@ -86,9 +86,8 @@ class BlogController extends AbstractController
 
         $form->handleRequest($request);
 
-        // the isSubmitted() method is completely optional because the other
-        // isValid() method already checks whether the form is submitted.
-        // However, we explicitly add it to improve code readability.
+        // The isSubmitted() call is mandatory because the isValid() method
+        // throws an exception if the form has not been submitted.
         // See https://symfony.com/doc/current/forms.html#processing-forms
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($post);
@@ -104,10 +103,10 @@ class BlogController extends AbstractController
             $submit = $form->get('saveAndCreateNew');
 
             if ($submit->isClicked()) {
-                return $this->redirectToRoute('admin_post_new');
+                return $this->redirectToRoute('admin_post_new', [], Response::HTTP_SEE_OTHER);
             }
 
-            return $this->redirectToRoute('admin_post_index');
+            return $this->redirectToRoute('admin_post_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('admin/blog/new.html.twig', [
@@ -119,7 +118,7 @@ class BlogController extends AbstractController
     /**
      * Finds and displays a Post entity.
      */
-    #[Route('/{id<\d+>}', methods: ['GET'], name: 'admin_post_show')]
+    #[Route('/{id<\d+>}', name: 'admin_post_show', methods: ['GET'])]
     public function show(Post $post): Response
     {
         // This security check can also be performed
@@ -134,7 +133,7 @@ class BlogController extends AbstractController
     /**
      * Displays a form to edit an existing Post entity.
      */
-    #[Route('/{id<\d+>}/edit', methods: ['GET', 'POST'], name: 'admin_post_edit')]
+    #[Route('/{id<\d+>}/edit', name: 'admin_post_edit', methods: ['GET', 'POST'])]
     #[IsGranted('edit', subject: 'post', message: 'Posts can only be edited by their authors.')]
     public function edit(Request $request, Post $post, EntityManagerInterface $entityManager): Response
     {
@@ -145,7 +144,7 @@ class BlogController extends AbstractController
             $entityManager->flush();
             $this->addFlash('success', 'post.updated_successfully');
 
-            return $this->redirectToRoute('admin_post_edit', ['id' => $post->getId()]);
+            return $this->redirectToRoute('admin_post_edit', ['id' => $post->getId()], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('admin/blog/edit.html.twig', [
@@ -157,7 +156,7 @@ class BlogController extends AbstractController
     /**
      * Deletes a Post entity.
      */
-    #[Route('/{id}/delete', methods: ['POST'], name: 'admin_post_delete')]
+    #[Route('/{id}/delete', name: 'admin_post_delete', methods: ['POST'])]
     #[IsGranted('delete', subject: 'post')]
     public function delete(Request $request, Post $post, EntityManagerInterface $entityManager): Response
     {
@@ -165,7 +164,7 @@ class BlogController extends AbstractController
         $token = $request->request->get('token');
 
         if (!$this->isCsrfTokenValid('delete', $token)) {
-            return $this->redirectToRoute('admin_post_index');
+            return $this->redirectToRoute('admin_post_index', [], Response::HTTP_SEE_OTHER);
         }
 
         // Delete the tags associated with this blog post. This is done automatically
@@ -178,6 +177,6 @@ class BlogController extends AbstractController
 
         $this->addFlash('success', 'post.deleted_successfully');
 
-        return $this->redirectToRoute('admin_post_index');
+        return $this->redirectToRoute('admin_post_index', [], Response::HTTP_SEE_OTHER);
     }
 }

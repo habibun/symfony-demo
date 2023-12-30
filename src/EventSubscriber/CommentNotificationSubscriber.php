@@ -14,6 +14,7 @@ namespace App\EventSubscriber;
 use App\Entity\Post;
 use App\Entity\User;
 use App\Event\CommentCreatedEvent;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
@@ -25,13 +26,14 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  *
  * @author Oleg Voronkovich <oleg-voronkovich@yandex.ru>
  */
-class CommentNotificationSubscriber implements EventSubscriberInterface
+final class CommentNotificationSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private MailerInterface $mailer,
-        private UrlGeneratorInterface $urlGenerator,
-        private TranslatorInterface $translator,
-        private string $sender
+        private readonly MailerInterface $mailer,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly TranslatorInterface $translator,
+        #[Autowire('%app.notifications.email_sender%')]
+        private readonly string $sender
     ) {
     }
 
@@ -74,8 +76,8 @@ class CommentNotificationSubscriber implements EventSubscriberInterface
             ->html($body)
         ;
 
-        // In config/packages/dev/mailer.yaml the delivery of messages is disabled.
-        // That's why in the development environment you won't actually receive any email.
+        // In config/packages/mailer.yaml the delivery of messages is disabled in the development environment.
+        // That's why you won't actually receive any email.
         // However, you can inspect the contents of those unsent emails using the debug toolbar.
         $this->mailer->send($email);
     }

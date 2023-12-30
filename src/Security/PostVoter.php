@@ -24,7 +24,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
  *
  * @author Yonel Ceruto <yonelceruto@gmail.com>
  */
-class PostVoter extends Voter
+final class PostVoter extends Voter
 {
     // Defining these constants is overkill for this simple application, but for real
     // applications, it's a recommended practice to avoid relying on "magic strings"
@@ -33,8 +33,6 @@ class PostVoter extends Voter
     public const SHOW = 'show';
 
     /**
-     * {@inheritdoc}
-     *
      * @phpstan-param object $subject
      */
     protected function supports(string $attribute, $subject): bool
@@ -44,8 +42,6 @@ class PostVoter extends Voter
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param Post $post
      */
     protected function voteOnAttribute(string $attribute, $post, TokenInterface $token): bool

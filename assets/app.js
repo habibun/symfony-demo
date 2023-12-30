@@ -1,11 +1,15 @@
 import './styles/app.scss';
+import '@fortawesome/fontawesome-free/css/all.css';
+import '@fortawesome/fontawesome-free/css/v4-shims.css';
+import 'highlight.js/styles/github-dark-dimmed.css';
+import 'lato-font/css/lato-font.css';
 
-// loads the Bootstrap jQuery plugins
-import 'bootstrap-sass/assets/javascripts/bootstrap/transition.js';
-import 'bootstrap-sass/assets/javascripts/bootstrap/alert.js';
-import 'bootstrap-sass/assets/javascripts/bootstrap/collapse.js';
-import 'bootstrap-sass/assets/javascripts/bootstrap/dropdown.js';
-import 'bootstrap-sass/assets/javascripts/bootstrap/modal.js';
+// loads the Bootstrap plugins
+import 'bootstrap/js/dist/alert';
+import 'bootstrap/js/dist/collapse';
+import 'bootstrap/js/dist/dropdown';
+import 'bootstrap/js/dist/tab';
+import 'bootstrap/js/dist/modal';
 import 'jquery'
 
 // loads the code syntax highlighting library
@@ -15,4 +19,6 @@ import './js/highlight.js';
 import './js/doclinks.js';
 
 // start the Stimulus application
-import './bootstrap';
+import './bootstrap.js';
+
+import './js/flatpicker.js';

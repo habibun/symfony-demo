@@ -43,22 +43,19 @@ use Symfony\Component\Console\Style\SymfonyStyle;
     name: 'app:delete-user',
     description: 'Deletes users from the database'
 )]
-class DeleteUserCommand extends Command
+final class DeleteUserCommand extends Command
 {
     private SymfonyStyle $io;
 
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private Validator $validator,
-        private UserRepository $users,
-        private LoggerInterface $logger
+        private readonly EntityManagerInterface $entityManager,
+        private readonly Validator $validator,
+        private readonly UserRepository $users,
+        private readonly LoggerInterface $logger
     ) {
         parent::__construct();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configure(): void
     {
         $this
@@ -101,7 +98,7 @@ class DeleteUserCommand extends Command
             '',
         ]);
 
-        $username = $this->io->ask('Username', null, [$this->validator, 'validateUsername']);
+        $username = $this->io->ask('Username', null, $this->validator->validateUsername(...));
         $input->setArgument('username', $username);
     }
 

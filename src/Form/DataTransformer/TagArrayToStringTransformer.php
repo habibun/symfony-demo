@@ -27,16 +27,13 @@ use function Symfony\Component\String\u;
  *
  * @template-implements DataTransformerInterface<Tag[], string>
  */
-class TagArrayToStringTransformer implements DataTransformerInterface
+final class TagArrayToStringTransformer implements DataTransformerInterface
 {
     public function __construct(
-        private TagRepository $tags
+        private readonly TagRepository $tags
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function transform($tags): string
     {
         // The value received is an array of Tag objects generated with
@@ -47,8 +44,6 @@ class TagArrayToStringTransformer implements DataTransformerInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @phpstan-param string|null $string
      *
      * @phpstan-return array<int, Tag>

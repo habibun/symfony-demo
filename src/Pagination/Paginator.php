@@ -18,7 +18,7 @@ use Doctrine\ORM\Tools\Pagination\Paginator as DoctrinePaginator;
 /**
  * @author Javier Eguiluz <javier.eguiluz@gmail.com>
  */
-class Paginator
+final class Paginator
 {
     /**
      * Use constants to define configuration options that rarely change instead
@@ -26,19 +26,19 @@ class Paginator
      *
      * See https://symfony.com/doc/current/best_practices.html#use-constants-to-define-options-that-rarely-change
      */
-    public const PAGE_SIZE = 10;
+    final public const PAGE_SIZE = 10;
 
     private int $currentPage;
     private int $numResults;
 
     /**
-     * @var \Traversable<int, object>
+     * @var \Traversable<array-key, object>
      */
     private \Traversable $results;
 
     public function __construct(
-        private DoctrineQueryBuilder $queryBuilder,
-        private int $pageSize = self::PAGE_SIZE
+        private readonly DoctrineQueryBuilder $queryBuilder,
+        private readonly int $pageSize = self::PAGE_SIZE
     ) {
     }
 
@@ -59,6 +59,7 @@ class Paginator
             $query->setHint(CountWalker::HINT_DISTINCT, false);
         }
 
+        /** @var DoctrinePaginator<object> $paginator */
         $paginator = new DoctrinePaginator($query, true);
 
         /** @var array<string, mixed> $havingDqlParts */

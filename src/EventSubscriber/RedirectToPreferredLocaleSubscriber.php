@@ -26,18 +26,18 @@ use function Symfony\Component\String\u;
  *
  * @author Oleg Voronkovich <oleg-voronkovich@yandex.ru>
  */
-class RedirectToPreferredLocaleSubscriber implements EventSubscriberInterface
+final class RedirectToPreferredLocaleSubscriber implements EventSubscriberInterface
 {
     /**
      * @var string[]
      */
     private array $locales;
-    private string $defaultLocale;
+    private readonly string $defaultLocale;
 
     public function __construct(
-        private UrlGeneratorInterface $urlGenerator,
+        private readonly UrlGeneratorInterface $urlGenerator,
         string $locales,
-        ?string $defaultLocale = null
+        string $defaultLocale = null
     ) {
         $this->locales = explode('|', trim($locales));
         if (empty($this->locales)) {
